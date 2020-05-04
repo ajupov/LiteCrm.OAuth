@@ -94,6 +94,24 @@ namespace LiteCrm.OAuth.Extensions
                                 }
 
                                 return Task.CompletedTask;
+                            },
+                            OnRemoteFailure = context =>
+                            {
+                                var hasUserAgent =
+                                    context.HttpContext.Request.Headers.TryGetValue(
+                                        HeaderNames.UserAgent, out var userAgent) &&
+                                    !string.IsNullOrWhiteSpace(userAgent.ToString());
+
+                                if (hasUserAgent)
+                                {
+                                    context.Response.Redirect(context.Properties.RedirectUri);
+                                }
+                                else
+                                {
+                                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                                }
+
+                                return Task.CompletedTask;
                             }
                         };
                     }
