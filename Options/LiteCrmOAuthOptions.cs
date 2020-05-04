@@ -8,6 +8,8 @@
 
         public string[] Scopes { get; set; }
 
+        public string LoginPath { get; set; }
+
         public string CallbackPath { get; set; }
 
         public string AuthorizationUrl { get; set; }
