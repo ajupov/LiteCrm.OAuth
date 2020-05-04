@@ -104,12 +104,14 @@ namespace LiteCrm.OAuth.Extensions
 
                                 if (hasUserAgent)
                                 {
-                                    context.Response.Redirect(context.Properties.RedirectUri);
+                                    context.Response.Redirect("/Auth/Login");
                                 }
                                 else
                                 {
                                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                                 }
+
+                                context.HandleResponse();
 
                                 return Task.CompletedTask;
                             }
