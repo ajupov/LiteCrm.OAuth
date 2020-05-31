@@ -34,75 +34,74 @@ namespace LiteCrm.OAuth.Extensions
 
             return builder
                 .AddOAuth(JwtDefaults.AuthenticationScheme, options =>
+                {
+                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
+                    options.Scope.Add(LiteCrmOAuthDefaults.OpenIdScope);
+                    options.Scope.Add(LiteCrmOAuthDefaults.ProfileScope);
+
+                    if (!string.IsNullOrWhiteSpace(scopes))
                     {
-                        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
-                        options.ClientId = clientId;
-                        options.ClientSecret = clientSecret;
-                        options.Scope.Add(LiteCrmOAuthDefaults.OpenIdScope);
-                        options.Scope.Add(LiteCrmOAuthDefaults.ProfileScope);
-
-                        if (!string.IsNullOrWhiteSpace(scopes))
-                        {
-                            scopes
-                                .Split(",")
-                                .ToList()
-                                .ForEach(x => options.Scope.Add(x.Trim()));
-                        }
-
-                        options.CallbackPath = new PathString(callbackPath);
-
-                        options.AuthorizationEndpoint = authorizationUrl ?? LiteCrmOAuthDefaults.AuthorizationUrl;
-                        options.UserInformationEndpoint = userInfoUrl ?? LiteCrmOAuthDefaults.UserInfoUrl;
-                        options.TokenEndpoint = tokenUrl ?? LiteCrmOAuthDefaults.TokenUrl;
-
-                        options.SaveTokens = true;
-
-                        options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, JwtDefaults.IdentifierClaimType);
-                        options.ClaimActions.MapJsonKey(ClaimTypes.Email, JwtDefaults.EmailClaimType);
-                        options.ClaimActions.MapJsonKey(ClaimTypes.HomePhone, JwtDefaults.PhoneClaimType);
-                        options.ClaimActions.MapJsonKey(ClaimTypes.Surname, JwtDefaults.SurnameClaimType);
-                        options.ClaimActions.MapJsonKey(ClaimTypes.Name, JwtDefaults.NameClaimType);
-                        options.ClaimActions.MapJsonKey(ClaimTypes.DateOfBirth, JwtDefaults.BirthDateClaimType);
-                        options.ClaimActions.MapJsonKey(ClaimTypes.Gender, JwtDefaults.GenderClaimType);
-
-                        options.Events = new OAuthEvents
-                        {
-                            OnCreatingTicket = async context =>
-                            {
-                                var userInfoJson = await UserInfoHelper.GetUserInfoJsonAsync(context);
-
-                                context.AppendRolesToClaims(userInfoJson);
-                            },
-                            OnRedirectToAuthorizationEndpoint = context =>
-                            {
-                                if (HasUserAgent(context.HttpContext))
-                                {
-                                    context.Response.Redirect(context.RedirectUri);
-                                }
-                                else
-                                {
-                                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                                }
-
-                                return Task.CompletedTask;
-                            },
-                            OnRemoteFailure = context =>
-                            {
-                                if (HasUserAgent(context.HttpContext))
-                                {
-                                    context.Response.Redirect(loginPath);
-                                }
-                                else
-                                {
-                                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                                }
-
-                                return Task.CompletedTask;
-                            }
-                        };
+                        scopes
+                            .Split(",")
+                            .ToList()
+                            .ForEach(x => options.Scope.Add(x.Trim()));
                     }
-                );
+
+                    options.CallbackPath = new PathString(callbackPath);
+
+                    options.AuthorizationEndpoint = authorizationUrl ?? LiteCrmOAuthDefaults.AuthorizationUrl;
+                    options.UserInformationEndpoint = userInfoUrl ?? LiteCrmOAuthDefaults.UserInfoUrl;
+                    options.TokenEndpoint = tokenUrl ?? LiteCrmOAuthDefaults.TokenUrl;
+
+                    options.SaveTokens = true;
+
+                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, JwtDefaults.IdentifierClaimType);
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, JwtDefaults.EmailClaimType);
+                    options.ClaimActions.MapJsonKey(ClaimTypes.HomePhone, JwtDefaults.PhoneClaimType);
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Surname, JwtDefaults.SurnameClaimType);
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, JwtDefaults.NameClaimType);
+                    options.ClaimActions.MapJsonKey(ClaimTypes.DateOfBirth, JwtDefaults.BirthDateClaimType);
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Gender, JwtDefaults.GenderClaimType);
+
+                    options.Events = new OAuthEvents
+                    {
+                        OnCreatingTicket = async context =>
+                        {
+                            var userInfoJson = await UserInfoHelper.GetUserInfoJsonAsync(context);
+
+                            context.AppendRolesToClaims(userInfoJson);
+                        },
+                        OnRedirectToAuthorizationEndpoint = context =>
+                        {
+                            if (HasUserAgent(context.HttpContext))
+                            {
+                                context.Response.Redirect(context.RedirectUri);
+                            }
+                            else
+                            {
+                                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            }
+
+                            return Task.CompletedTask;
+                        },
+                        OnRemoteFailure = context =>
+                        {
+                            if (HasUserAgent(context.HttpContext))
+                            {
+                                context.Response.Redirect(loginPath);
+                            }
+                            else
+                            {
+                                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
         }
 
         private static bool HasUserAgent(HttpContext context)
