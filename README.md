@@ -1,6 +1,5 @@
 # LiteCrm.OAuth
-
-OAuth client for Lite CRM.
+OAuth client for [Lite CRM](https://litecrm.org)
 
 ## Usage
 1. Add nuget source: `nuget sources add -name GPR -Source https://nuget.pkg.github.com/ajupov`
