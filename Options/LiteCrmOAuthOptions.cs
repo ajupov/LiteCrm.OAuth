@@ -17,5 +17,7 @@
         public string UserInfoUrl { get; set; }
 
         public string TokenUrl { get; set; }
+
+        public bool UseAlwaysHttpsForRedirectUrl { get; set; }
     }
 }
