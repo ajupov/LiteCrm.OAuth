@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using LiteCrm.OAuth.Helpers;
@@ -78,7 +79,11 @@ namespace LiteCrm.OAuth.Extensions
                         {
                             if (HasUserAgent(context.HttpContext))
                             {
-                                context.Response.Redirect(context.RedirectUri);
+                                var redirectUri =
+                                    context.RedirectUri.Replace("redirect_uri=http", "redirect_uri=https",
+                                        StringComparison.InvariantCultureIgnoreCase);
+
+                                context.Response.Redirect(redirectUri);
                             }
                             else
                             {
