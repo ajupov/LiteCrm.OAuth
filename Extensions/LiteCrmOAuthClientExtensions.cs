@@ -83,7 +83,7 @@ namespace LiteCrm.OAuth.Extensions
                             if (HasUserAgent(context.HttpContext))
                             {
                                 var redirectUri = useAlwaysHttpsForRedirectUrl
-                                    ? context.RedirectUri.Replace("redirect_uri=http://", "redirect_uri=https://",
+                                    ? context.RedirectUri.Replace("redirect_uri=http%3A", "redirect_uri=https%3A",
                                         StringComparison.InvariantCultureIgnoreCase)
                                     : context.RedirectUri;
 
