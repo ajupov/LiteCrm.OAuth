@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using LiteCrm.OAuth.Helpers;
@@ -21,9 +20,6 @@ namespace LiteCrm.OAuth.Extensions
             IConfiguration configuration)
         {
             var liteCrmOAuthOptions = configuration.GetSection(nameof(LiteCrmOAuthOptions));
-
-            var useAlwaysHttpsForRedirectUrl =
-                liteCrmOAuthOptions.GetValue<bool>(nameof(LiteCrmOAuthOptions.UseAlwaysHttpsForRedirectUrl));
 
             var loginPath = liteCrmOAuthOptions.GetValue<string>(nameof(LiteCrmOAuthOptions.LoginPath));
             var callbackPath = liteCrmOAuthOptions.GetValue<string>(nameof(LiteCrmOAuthOptions.CallbackPath));
@@ -82,12 +78,7 @@ namespace LiteCrm.OAuth.Extensions
                         {
                             if (HasUserAgent(context.HttpContext))
                             {
-                                var redirectUri = useAlwaysHttpsForRedirectUrl
-                                    ? context.RedirectUri.Replace("redirect_uri=http%3A", "redirect_uri=https%3A",
-                                        StringComparison.InvariantCultureIgnoreCase)
-                                    : context.RedirectUri;
-
-                                context.Response.Redirect(redirectUri);
+                                context.Response.Redirect(context.RedirectUri);
                             }
                             else
                             {
